@@ -1,17 +1,17 @@
 # Uninstall-AdobeCCProducts.ps1
 # SYNOPSIS
 
-Automates the uninstallation of Adobe Creative Cloud applications or lists installed products using the Adobe Uninstaller (`AdobeUninstaller.exe`). It is designed for enterprise use, including deployment via Microsoft Intune Win32 packages, SCCM Packages, and can be utilized as a PatchMyPC Pre-script. The script supports various parameters for flexible removal of Adobe CC products.
+Automates the uninstallation of Adobe Creative Cloud applications or lists installed products using the Adobe Uninstaller (`AdobeUninstaller.exe`). It is designed for enterprise use, including deployment via Microsoft Intune Win32 packages, SCCM Packages, and can be utilized as a PatchMyPC Pre-script. The script supports various parameters for flexible removal of Adobe CC products including the Adobe Creative Cloud Desktop Application. The script also supports removal of leftover MSI registry keys left behind during uninstallation of Adobe CC Products. 
 
 ## DESCRIPTION
 
-The purpose of this script is to provide a silent, clean and flexible method for removing specific and/or all Adobe Creative Cloud Applications. This script can also remove the Adobe Creative Cloud Desktop Application and supports removeal of any leftover registry keys from those Adobe CC products.
+The purpose of this script is to provide a silent, clean and flexible method for removing specific and/or all Adobe Creative Cloud Applications. This script can also remove the Adobe Creative Cloud Desktop Application and supports removal of any leftover registry keys from those Adobe CC products.
 
-The script relies on the `AdobeUninstaller.exe` to perform its primary functions and will require the uninstaller to be included in the application package or script directory location. You can use the `-uninstallerPath` parameter to referece the `AdobeUninstaller.exe` from a different location on the client if needed. The `AdobeUninstaller.exe` can be downloaded from the [Adobe Admin Console](https://adminconsole.adobe.com/?promoid=12B9DRDF&mv=other).
+The script relies on the `AdobeUninstaller.exe` to perform its primary functions and will require the uninstaller to be included in the application package or script directory location. You can use the `-uninstallerPath` parameter to reference the `AdobeUninstaller.exe` from a different location on the client if needed. The `AdobeUninstaller.exe` can be downloaded from the [Adobe Admin Console](https://adminconsole.adobe.com/?promoid=12B9DRDF&mv=other).
 
-The script also supports exporting the list of products as either a `table` or `xml` file format. The `xml` file can then be used to remove those listed products using the `-unintallConfigPath` parameter which passed the `xml` to the `AdobeUninstaller.exe` to perform the unisntallations.
+The script also supports exporting the list of products as either a `table` or `xml` file format. The `xml` file can then be used to remove those listed products using the `-uninstallConfigPath` parameter which passed the `xml` to the `AdobeUninstaller.exe` to perform the uninstallation.
 
-Typically this script is best used with Adobe Creative Cloud custom apps built through the PatchMyPC cloud portal. This will help remove over versions (Photoshop 2024) when upgrading to a newer version (Photoshop 2025). However, this script can be ran locally on the client with local admin privledges. 
+Typically this script is best used with Adobe Creative Cloud custom apps built through the PatchMyPC. cloud portal. This will help remove over versions (Photoshop 2024) when upgrading to a newer version (Photoshop 2025). However, this script can be ran locally on the client with local admin privileges. 
 
 Logging is also supported with the script. All file exports, including logging, can be found in the SYSTEM temp folder: (`C:\Windows\Temp`).
 
@@ -20,7 +20,7 @@ Logging is also supported with the script. All file exports, including logging, 
 - **PatchMyPC Pre-Script**: The script can be utilized as a pre-script along with PatchMyPC Custom Adobe CC Applications to remove older versions of those prior to installing the updated version. 
 - **Standalone**: The script can also be used outside of PatchMyPC products to remove any or all Adobe CC products.
 - **AdobeUninstaller.exe**: Must be bundled with the script in the same directory. If you're including the script as a pre-script, then the AdobeUninstaller must be added to the package as an Additional or Extra File. The AdobeUninstaller can be downloaded from [The Adobe Admin Console](https://helpx.adobe.com/enterprise/using/uninstall-creative-cloud-products.html).
-- **Addobe SAP Product Codes**: The `-Products` parameter requires the SAP product code to reference the product you wish to remove. A list of those SAP product codes can be found here: [SAP Product Codes](https://helpx.adobe.com/enterprise/kb/adobe-cc-app-base-versions.html).
+- **Adobe SAP Product Codes**: The `-Products` parameter requires the SAP product code to reference the product you wish to remove. A list of those SAP product codes can be found here: [SAP Product Codes](https://helpx.adobe.com/enterprise/kb/adobe-cc-app-base-versions.html).
 
 
 ## SUPPORTED PARAMETERS
@@ -48,13 +48,13 @@ Logging is also supported with the script. All file exports, including logging, 
 
 - **`-UninstallerPath`** (String)
   - Description: Path to `AdobeUninstaller.exe`. Defaults to script directory.
-  - AdobeUninstaller.exe`
+  - Default Value: `$PSScriptRoot\AdobeUninstaller.exe`
 
 - **`-uninstallConfigPath`** (String)
-  - Descripttion: Path to an XML file containing uninstallation configurations to be passed directly to `AdobeUninstaller.exe`.
+  - Description: Path to an XML file (`AdobeCCProductListOutput.xml`) containing uninstallation configurations to be passed directly to `AdobeUninstaller.exe`.
   - The file must be in the same directory as `AdobeUninstaller.exe` or a relative path from that directory.
   - Mutually exclusive with `-All` and `-List` parameters.
-  - Default Value: `$PSScriptRoot\AdobeUninstaller.exe`
+  - Default Value: `$PSScriptRoot\AdobeCCProductListOutput.xml`
 
 - **`-uninstallAdobeCCApp`** (Switch)
     - Removes the Adobe Creative Cloud app using the Creative Cloud Uninstaller. Can be used with `-Products`, `-uninstallConfigPath`, or `-RegKeyCleanUp`.
@@ -76,35 +76,35 @@ Logging is also supported with the script. All file exports, including logging, 
 ### Example 1: 
 - Silently uninstalls Photoshop 2024 and Illustrator 2024 using the bundled `AdobeUninstaller.exe`, skipping uninstalled products.
 ```
-.\Remove-AdobeCCProducts.ps1 -Products "PHSP#25.0,ILST#28.0" -SkipNotInstalled
+.\Uninstall-AdobeCCProducts.ps1 -Products "PHSP#25.0,ILST#28.0" -SkipNotInstalled
 ```
 
 ### Example 2: 
 - Silently uninstalls all Adobe CC products using the bundled AdobeUninstaller.exe.
 ```
-.\Remove-AdobeCCProducts.ps1 -All
+.\Uninstall-AdobeCCProducts.ps1 -All
 ```
 
 ### Example 3: 
 - Lists all installed Adobe CC products in table format, saving output to `C:\Windows\Temp` with a `.log` extension.
 ```
-   .\Remove-AdobeCCProducts.ps1 -List
+   .\Uninstall-AdobeCCProducts.ps1 -List
 ```   
 
-### Exmaple 4:
+### Example 4:
  - Lists all installed Adobe CC products in XML format, saving output to `C:\Windows\Temp` with a `.xml` extension.
 ```
-   .\Remove-AdobeCCProducts.ps1 -List -Format "xml"
+   .\Uninstall-AdobeCCProducts.ps1 -List -Format "xml"
 ```   
 ### Example 5: 
  - Silently uninstalls Photoshop 2024 using a custom uninstaller path.
 ```
- .\Remove-AdobeCCProducts.ps1 -Products "PHSP#25.0" -UninstallerPath "C:\Tools\AdobeUninstaller.exe"
+ .\Uninstall-AdobeCCProducts.ps1 -Products "PHSP#25.0" -UninstallerPath "C:\Tools\AdobeUninstaller.exe"
 ```
 ### Example 6:
 - Passes `AdobeCCProductListOutput.xml` to `AdobeUninstaller.exe` for product removal, skipping uninstalled products.
 ```
-   .\Remove-AdobeCCProducts.ps1 -uninstallConfigPath "AdobeCCProductListOutput.xml" -SkipNotInstalled
+   .\Uninstall-AdobeCCProducts.ps1 -uninstallConfigPath "AdobeCCProductListOutput.xml" -SkipNotInstalled
 ```   
 ### Example 7:
 - Uninstalls Photoshop and Illustrator, then removes the Adobe Creative Cloud app.
